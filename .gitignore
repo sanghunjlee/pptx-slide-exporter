@@ -1,6 +1,11 @@
 # Python
 __pycache__
 
+# Build
+*.spec
+build
+dist
+
 # IDE
 .vscode
 
