@@ -1,10 +1,22 @@
+import os
+import sys
 from .model import Model
 from .view import View
+
+def get_asset_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, relative_path)
 
 class Control(object):
     def __init__(self, model: Model, view: View):
         self.model = model
         self.view = view
+        
+        self.view.window.iconbitmap(get_asset_path("assets/icon.ico"))
 
         self.do_auto_detect()
 
