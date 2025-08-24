@@ -28,6 +28,7 @@ class Model(object):
             
         if len(app.Presentations) == 0:
             # No file opened
+            print("There is no presentation!")
             self.reset_props()
             return False
         
@@ -36,24 +37,38 @@ class Model(object):
             if active_presentation.FullName == "":
                 print("No active presentation")
                 self.reset_props()
-                return
+                return False
             self.is_active = True
             self.path = active_presentation.FullName
             self.curr_slide = 1
-            self.max_slide = len(active_presentation.Slides)            
+            self.max_slide = len(active_presentation.Slides)          
             return True
-        except:
+        except Exception as e:
             # No active presentation
             self.reset_props()
             return False
-            
-            
+
+    def auto_detect_current_slide(self):
+        app = self.get_active_pp()
+        if app is None:
+            # No powerpoint app is open
+            return
+        
+        try:
+            active_window = app.ActiveWindow
+            selection = active_window.Selection
+            selected_slide = selection.SlideRange.Item(1)
+            self.curr_slide = selected_slide.SlideIndex
+        except Exception as e:
+            print("Error occurred while parsing selected slide:", e)
+            return
         
     def get_active_pp(self):
         try:
             active = win32com.client.GetActiveObject("PowerPoint.Application")
             return active
         except Exception as e:
+            print("There is no active powerpoint object!")
             return None
 
     def get_pptx_info(self, path: str):
@@ -119,3 +134,16 @@ class Model(object):
                     app.Quit()
             except Exception as e:
                 pass
+
+def test():
+    m = Model()
+    try:
+        m.auto_detect()
+        m.auto_detect_current_slide()
+
+        print(f"Full Name: {m.path}\nCurrent Slide: {m.curr_slide}\nMax Slides: {m.max_slide}")
+    except Exception as e:
+        print(e)
+
+if __name__ == "__main__":
+    test()

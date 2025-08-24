@@ -34,6 +34,8 @@ class Control(object):
     def do_auto_detect(self):
         is_detected = self.model.auto_detect()
         if is_detected:
+            self.model.auto_detect_current_slide()
+            
             self.view.set_path(self.model.path)
             self.view.set_slide(self.model.curr_slide)
             self.view.set_max(self.model.max_slide)        
